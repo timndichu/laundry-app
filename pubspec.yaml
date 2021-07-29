@@ -36,6 +36,7 @@ dependencies:
   universal_html:
   provider: ^4.3.1
   http: ^0.12.2
+  transparent_image: ^1.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

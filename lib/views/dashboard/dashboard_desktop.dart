@@ -1,8 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:laundry_admin/views/dashboard/add_product/add_product.dart';
 import 'package:laundry_admin/views/dashboard/add_product/add_product_desktop.dart';
 import 'package:laundry_admin/views/dashboard/add_service.dart/add_service.dart';
 import 'package:laundry_admin/views/dashboard/add_service.dart/add_service_desktop.dart';
+import 'package:laundry_admin/views/dashboard/dashboard.dart';
+import 'package:laundry_admin/views/dashboard/update_product/update_product.dart';
+import 'package:laundry_admin/views/dashboard/update_product/update_product_desktop.dart';
+import 'package:laundry_admin/views/dashboard/update_service/update_service.dart';
+import 'package:laundry_admin/views/dashboard/view_products/products.dart';
+import 'package:laundry_admin/views/dashboard/view_services/services.dart';
+import 'package:laundry_admin/views/login/login.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DashboardDesktop extends StatefulWidget {
@@ -41,9 +49,9 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
     Widget _addProduct() {
       return InkWell(
           onTap: () {
-             Navigator.push(
+            Navigator.push(
               context,
-              CupertinoPageRoute(builder: (context) => AddProductDesktop()),
+              CupertinoPageRoute(builder: (context) => AddProduct()),
             );
           },
           child: Container(
@@ -62,7 +70,12 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
 
     Widget _updateService() {
       return InkWell(
-          onTap: () {},
+          onTap: () {
+               Navigator.push(
+              context,
+              CupertinoPageRoute(builder: (context) => Services(update: true)),
+            );
+          },
           child: Container(
             width: 120,
             padding: EdgeInsets.symmetric(vertical: 14),
@@ -79,7 +92,12 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
 
     Widget _updateProduct() {
       return InkWell(
-          onTap: () {},
+          onTap: () {
+               Navigator.push(
+              context,
+              CupertinoPageRoute(builder: (context) => UpdateProduct()),
+            );
+          },
           child: Container(
             width: 120,
             padding: EdgeInsets.symmetric(vertical: 14),
@@ -137,7 +155,14 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
             actions: [
               RaisedButton.icon(
                   color: Colors.transparent,
-                  onPressed: () {},
+                  onPressed: () {
+                     Navigator.pushAndRemoveUntil(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => Login()),
+                              (Route<dynamic> route) => false,
+                            );
+                  },
                   icon: Icon(Icons.logout, color: Colors.white),
                   label:
                       Text('Log out', style: TextStyle(color: Colors.white))),
@@ -150,17 +175,45 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
                 color: Colors.white,
                 child: ListView(
                   children: [
-                    ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple,
+                          borderRadius: BorderRadius.circular(8))
+                       , child: ListTile(
+                          leading: Icon(Icons.home, color: Colors.white),
+                          
+                         
+                          title: Text('Home', style: TextStyle(color:Colors.white)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(builder: (context) => Dashboard()),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                     ListTile(
                       leading: Icon(Icons.local_laundry_service),
                       title: Text('View Services'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (context) => Services()),
+                        );
+                      },
                     ),
                     ListTile(
                       leading: Icon(MdiIcons.tshirtCrew),
                       title: Text('View Products'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (context) => Products()),
+                        );
+                      },
                     )
                   ],
                 )),
