@@ -1,6 +1,6 @@
-# laundry_admin
+# Laundry Flutter app
 
-A new Flutter project.
+
 
 ## Getting Started
 
