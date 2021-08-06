@@ -348,19 +348,22 @@ class _AddServiceDesktopState extends State<AddServiceDesktop> {
           title: Text('Add Service'),
         ),
         body: 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text('Add Service', style: TextStyle(fontSize: 22)),
-                ),
-                SizedBox(height: 50),
-                _formWidget(height: height)
-              ]
-            
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text('Add Service', style: TextStyle(fontSize: 22)),
+                  ),
+                  SizedBox(height: 50),
+                  _formWidget(height: height)
+                ]
+              
           
-        ));
+        ),
+            ));
   }
 }

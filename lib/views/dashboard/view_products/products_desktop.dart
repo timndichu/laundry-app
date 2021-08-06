@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:laundry_admin/providers/shop_provider.dart';
 import 'package:laundry_admin/views/dashboard/add_product/add_product_desktop.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service_desktop.dart';
+
 import 'package:laundry_admin/views/dashboard/view_products/products.dart';
 import 'package:laundry_admin/views/dashboard/view_products/products.dart';
 import 'package:laundry_admin/views/dashboard/view_services/services.dart';
@@ -16,6 +15,8 @@ import 'package:provider/provider.dart';
 import '../dashboard.dart';
 
 class ProductsDesktop extends StatefulWidget {
+  final int serviceId;
+  ProductsDesktop({this.serviceId});
   @override
   _ProductsDesktopState createState() => _ProductsDesktopState();
 }
@@ -30,7 +31,7 @@ class _ProductsDesktopState extends State<ProductsDesktop> {
     Provider.of<ShopProvider>(context, listen: false).products.length > 0
         ? print('ALready fetched')
         : Future.delayed(Duration.zero, () {
-            Provider.of<ShopProvider>(context, listen: false).getProducts();
+            Provider.of<ShopProvider>(context, listen: false).getProducts( widget.serviceId);
           });
   
     super.initState();
@@ -40,7 +41,7 @@ class _ProductsDesktopState extends State<ProductsDesktop> {
    
     await Future.delayed(Duration.zero, () {
       Provider.of<ShopProvider>(context, listen: false)
-          .getProducts()
+          .getProducts(widget.serviceId)
           .then((value) {
         setState(() {
           isLoading = false;
@@ -63,107 +64,62 @@ class _ProductsDesktopState extends State<ProductsDesktop> {
         
             title: Text('All Products'),
            ),
-        body: Row(
-          children: [
-            Container(
-                width: width / 6,
-                height: height,
-                color: Colors.white,
-                child: ListView(
-                  children: [
-                   ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Dashboard()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.local_laundry_service),
-                      title: Text('View Services'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Services()),
-                        );
-                      },
-                    ),
-                     Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.deepPurple,
-                          borderRadius: BorderRadius.circular(8))
-                       , child: ListTile(
-                           leading: Icon(MdiIcons.tshirtCrew,color: Colors.white),
-                      title: Text('View Products', style: TextStyle(color: Colors.white)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Products()),
-                        );
-                      },
-                        ),
-                      ),
-                    ),
-                 
-                  ],
-                )),
-              Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Consumer<ShopProvider>(
-                      builder: (context, model, child) {
-                        Widget content =
-                            Center(child: Text('Error fetching data. Check your Internet connection'));
+        body: 
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  
+                  children: <Widget>[
+                    Expanded(
+                      child: Consumer<ShopProvider>(
+                        builder: (context, model, child) {
+                          Widget content =
+                              Center(child: Text('Error fetching data. Check your Internet connection'));
 
-                        if (model.isLoading) {
-                       
-                          content = Center(child: CircularProgressIndicator());
-                        } else if ((model.products.length == 0 &&
-                            !model.isLoading)) {
-                          content =
-                              Center(child: Text('No products added yet'));
-                        } else if ((model.products.length > 0 &&
-                            !model.isLoading)) {
-                          content = new RefreshIndicator(
-                            onRefresh: _refresh,
-                            child: GridView.builder(
-                              padding: EdgeInsets.all(15),
-                           
-                              physics: AlwaysScrollableScrollPhysics(),
-                              gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                    4 ,mainAxisSpacing: 15,crossAxisSpacing: 15,childAspectRatio: 0.7
+                          if (model.isLoading) {
+                         
+                            content = Center(child: CircularProgressIndicator());
+                          } else if ((model.products.length == 0 &&
+                              !model.isLoading)) {
+                            content =
+                                Center(child: Text('No products added yet'));
+                          } else if ((model.products.length > 0 &&
+                              !model.isLoading)) {
+                            content = new RefreshIndicator(
+                              onRefresh: _refresh,
+                              child: GridView.builder(
+                                padding: EdgeInsets.all(15),
+                             
+                                physics: AlwaysScrollableScrollPhysics(),
+                                gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                      4 ,mainAxisSpacing: 15,crossAxisSpacing: 15,childAspectRatio: 0.7
 ),
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              itemCount: model.products.length,
-                              itemBuilder: (BuildContext _context, int index) {
-                                if (index < model.products.length) {
-                                  return ProductsCard(
-                                      product: model.products[index],
-                                      index: index);
-                                } else {
-                                  return Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 32.0),
-                                    child: Center(
-                                        child: Text('nothing more to load!')),
-                                  );
-                                }
-                              },
-                            ),
-                          );
-                        }
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount: model.products.length,
+                                itemBuilder: (BuildContext _context, int index) {
+                                  if (index < model.products.length) {
+                                    return ProductsCard(
+                                        product: model.products[index],
+                                        index: index);
+                                  } else {
+                                    return Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 32.0),
+                                      child: Center(
+                                          child: Text('nothing more to load!')),
+                                    );
+                                  }
+                                },
+                              ),
+                            );
+                          }
 
-                        return content;
-                      },))])
-          ],
-        ));
+                          return content;
+                        },))]),
+              )
+        );
   }
 }

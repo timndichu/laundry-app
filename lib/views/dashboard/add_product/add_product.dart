@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:laundry_admin/responsiveness/screen_type.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service_desktop.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service_mobile.dart';
+
 
 import 'add_product_desktop.dart';
 import 'add_product_mobile.dart';

@@ -347,37 +347,12 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
           backgroundColor: Colors.deepPurple,
           title: Text('Update Service'),
         ),
-        body: Row(
-          children: [
-            Container(
-                width: width / 6,
-                height: height,
-                color: Colors.white,
-                child: ListView(
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Dashboard()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.local_laundry_service),
-                      title: Text('View Services'),
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.tshirtCrew),
-                      title: Text('View Products'),
-                    )
-                  ],
-                )),
-            Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+        body:
+          Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -386,9 +361,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
                 SizedBox(height: 50),
                 _formWidget(height: height)
               ],
-            ),
-            Spacer()
-          ],
+              )
         ));
   }
 }

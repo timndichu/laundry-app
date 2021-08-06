@@ -62,12 +62,12 @@ class ShopProvider extends ChangeNotifier {
     }
   }
 
-    Future getProducts() async {
+    Future getProducts(int serviceId) async {
     Map<String, dynamic> responseData = {};
     List<Product> fetchedProducts = [];
      _isLoading = true;
       notifyListeners();
-    String url = formatter('/laundry/getProducts');
+    String url = formatter('/laundry/getProducts/$serviceId');
 
     var response = await http.get(url);
     if (response.statusCode == 200 || response.statusCode == 201) {

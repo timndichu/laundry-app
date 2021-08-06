@@ -1,17 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:laundry_admin/views/dashboard/add_product/add_product.dart';
-import 'package:laundry_admin/views/dashboard/add_product/add_product_desktop.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service_desktop.dart';
-import 'package:laundry_admin/views/dashboard/dashboard.dart';
-import 'package:laundry_admin/views/dashboard/update_product/update_product.dart';
-import 'package:laundry_admin/views/dashboard/update_product/update_product_desktop.dart';
-import 'package:laundry_admin/views/dashboard/update_service/update_service.dart';
-import 'package:laundry_admin/views/dashboard/view_products/products.dart';
-import 'package:laundry_admin/views/dashboard/view_services/services.dart';
+
+
 import 'package:laundry_admin/views/login/login.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 import 'package:analog_clock/analog_clock.dart';
 
 class DashboardMobile extends StatefulWidget {

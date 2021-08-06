@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:laundry_admin/providers/shop_provider.dart';
 import 'package:laundry_admin/views/dashboard/add_product/add_product_desktop.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service_desktop.dart';
+
 import 'package:laundry_admin/views/dashboard/view_products/products.dart';
 import 'package:laundry_admin/views/dashboard/view_services/services.dart';
 import 'package:laundry_admin/views/login/login.dart';

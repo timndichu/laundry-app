@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:laundry_admin/models/services.dart';
+import 'package:laundry_admin/views/dashboard/view_products/products.dart';
 
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -42,7 +43,11 @@ class _ServiceCardState extends State<ServiceCard> {
 
     return GestureDetector(
                     onTap: () {
-                    
+                      Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => Products(id: widget.index)),
+                              );
                     },
           child: Container(
             

@@ -13,6 +13,8 @@ import 'products_mobile.dart';
 
 
 class Products extends StatelessWidget {
+  final int id;
+  Products({this.id});
   @override
   Widget build(BuildContext context) {
      return ScreenTypeLayout(
@@ -22,7 +24,7 @@ class Products extends StatelessWidget {
       // ),
       mobile: ProductsMobile(),
       tablet:ProductsMobile(),
-      desktop: ProductsDesktop(),
+      desktop: ProductsDesktop(serviceId: id),
  
     );
   }

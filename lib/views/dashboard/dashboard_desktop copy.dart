@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:laundry_admin/views/dashboard/add_product/add_product.dart';
 import 'package:laundry_admin/views/dashboard/add_product/add_product_desktop.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service.dart';
-import 'package:laundry_admin/views/dashboard/add_service.dart/add_service_desktop.dart';
+
 import 'package:laundry_admin/views/dashboard/dashboard.dart';
 import 'package:laundry_admin/views/dashboard/update_product/update_product.dart';
 import 'package:laundry_admin/views/dashboard/update_product/update_product_desktop.dart';
@@ -27,10 +26,10 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
     Widget _addService(context) {
       return InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => AddService()),
-            );
+            // Navigator.push(
+            //   context,
+            //   CupertinoPageRoute(builder: (context) => AddService()),
+            // );
           },
           child: Container(
             width: 120,
