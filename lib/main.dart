@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:laundry_admin/providers/shop_provider.dart';
+import 'package:laundry_admin/views/dashboard/dashboard.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
              textSelectionTheme: TextSelectionThemeData(cursorColor: Colors.deepPurple, selectionColor: Colors.deepPurple, selectionHandleColor: Colors.deepPurple,),
         primarySwatch: Colors.deepPurple,
       ),
-      home: Login(),
+      home: Dashboard(),
     );
   }
 }

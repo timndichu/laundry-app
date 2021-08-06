@@ -7,8 +7,8 @@ import 'package:laundry_admin/models/products.dart';
 import 'package:laundry_admin/models/services.dart';
 
 class ShopProvider extends ChangeNotifier {
-  // String baseurl = "https://victorycakes.co.ke";
-  String baseurl = "http://localhost:3000";
+  String baseurl = "https://victorycakes.co.ke";
+  // String baseurl = "http://localhost:3000";
 
   String formatter(String url) {
     return baseurl + url;
@@ -78,7 +78,7 @@ class ShopProvider extends ChangeNotifier {
           title: item['title'],
           image: item['image'],
           price: item['price'],
-          service: item['service']
+          serviceId: item['serviceId']
         );
         fetchedProducts.add(product);
       });

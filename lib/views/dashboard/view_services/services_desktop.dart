@@ -67,58 +67,49 @@ class _ServicesDesktopState extends State<ServicesDesktop> {
             backgroundColor: Colors.deepPurple,
           
             title: Text('All Services'),
+            actions: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: ConstrainedBox(
+                            constraints:
+                                BoxConstraints.tightFor(width: 150, height: 35),
+                            child: ElevatedButton.icon( icon: Icon(Icons.add, size:26,  color: Colors.deepPurple), label:  Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text('Add Service',
+                                    style: TextStyle(
+                                        fontFamily: 'InterRegular',
+                                        color: Colors.deepPurple)),
+                              ),
+                              style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(0.2),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.white),
+                                  shape:
+                                      MaterialStateProperty.all(StadiumBorder()),
+                                  padding: MaterialStateProperty.all(
+                                      EdgeInsets.all(8)),
+                                  textStyle: MaterialStateProperty.all(TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.deepPurple,
+                                    fontFamily: 'InterRegular',
+                                  ))),
+                      
+                              onPressed: () => {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                      builder: (context) => AddService()),
+                                )
+                              },
+                            ),
+                          ),
+            ),
+                     
+            ],
            ),
-        body: Row(
-          children: [
-            Container(
-                width: width / 6,
-                height: height,
-                color: Colors.white,
-                child: ListView(
-                  children: [
-                   ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Dashboard()),
-                        );
-                      },
-                    ),
-                     Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.deepPurple,
-                          borderRadius: BorderRadius.circular(8))
-                       , child: ListTile(
-                           leading: Icon(Icons.local_laundry_service, color: Colors.white),
-                      title: Text('View Services', style: TextStyle(color: Colors.white)),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Services()),
-                        );
-                      },
-                        ),
-                      ),
-                    ),
-                   
-                    ListTile(
-                      leading: Icon(MdiIcons.tshirtCrew),
-                      title: Text('View Products'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Products()),
-                        );
-                      },
-                    )
-                  ],
-                )),
+        body: 
               Container(
-                width: width/1.5,
+              
                 child: Column(
                   children: <Widget>[
                     Expanded(
@@ -171,8 +162,7 @@ class _ServicesDesktopState extends State<ServicesDesktop> {
 
                           return content;
                         },))]),
-              )
-          ],
+          
         ));
   }
 }

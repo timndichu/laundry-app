@@ -347,37 +347,10 @@ class _AddServiceDesktopState extends State<AddServiceDesktop> {
           backgroundColor: Colors.deepPurple,
           title: Text('Add Service'),
         ),
-        body: Row(
-          children: [
-            Container(
-                width: width / 6,
-                height: height,
-                color: Colors.white,
-                child: ListView(
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Dashboard()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.local_laundry_service),
-                      title: Text('View Services'),
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.tshirtCrew),
-                      title: Text('View Products'),
-                    )
-                  ],
-                )),
-            Spacer(),
+        body: 
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -385,10 +358,9 @@ class _AddServiceDesktopState extends State<AddServiceDesktop> {
                 ),
                 SizedBox(height: 50),
                 _formWidget(height: height)
-              ],
-            ),
-            Spacer()
-          ],
+              ]
+            
+          
         ));
   }
 }
