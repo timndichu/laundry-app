@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:laundry_admin/models/services.dart';
 import 'package:laundry_admin/providers/shop_provider.dart';
 import 'package:laundry_admin/views/dashboard/dashboard.dart';
 import 'package:laundry_admin/views/dashboard/dashboard_desktop%20copy.dart';
@@ -13,6 +14,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 
 class UpdateServiceDesktop extends StatefulWidget {
+    final Service service;
+   UpdateServiceDesktop({this.service});
   @override
   _UpdateServiceDesktopState createState() => _UpdateServiceDesktopState();
 }
@@ -23,7 +26,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
   String password = '';
   bool loading = false;
   String serviceImage = '';
-
+  int serviceId = 0;
   File _image;
   final picker = ImagePicker();
   String fileSelectedText = 'No image selected';
@@ -31,7 +34,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
   bool imageExists = false;
 
   TextEditingController _serviceName = TextEditingController();
-  TextEditingController _password = TextEditingController();
+ 
 
   List<FocusNode> _focusNodes = [
     FocusNode(),
@@ -40,6 +43,8 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
 
   @override
   void initState() {
+    _serviceName.text = widget.service.title;
+    serviceId = widget.service.id;
     _focusNodes.forEach((node) {
       node.addListener(() {
         setState(() {});
@@ -50,7 +55,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
 
   @override
   void dispose() {
-    _password.dispose();
+    
     _serviceName.dispose();
     _focusNodes.forEach((node) {
       node.dispose();
@@ -158,7 +163,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
               if (image != null) {
                 print('There is an image!');
                 Provider.of<ShopProvider>(context, listen: false)
-                    .postService(serviceName, image)
+                    .updateServiceWithImage(serviceName, image, serviceId)
                     .then((response) {
                   if (response['success']) {
                     setState(() {
@@ -168,7 +173,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text('Service added Successfully :)'),
+                            content: Text('Service updated Successfully :)'),
                             actions: <Widget>[
                               FlatButton(
                                   onPressed: () {
@@ -178,10 +183,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
                             ],
                           );
                         });
-                    setState(() {
-                      _serviceName.text = '';
-                      objFile = null;
-                    });
+                
                   } else {
                     setState(() {
                       loading = false;
@@ -200,10 +202,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
                             ],
                           );
                         });
-                         setState(() {
-                      _serviceName.text = '';
-                      objFile = null;
-                    });
+                      
                   }
                 }).catchError((error) {
                   setState(() {
@@ -224,29 +223,73 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
                           ],
                         );
                       });
-                       setState(() {
-                      _serviceName.text = '';
-                      objFile = null;
-                    });
+                   
                 });
               } else {
-                setState(() {
-                  loading = false;
-                });
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: Text('No image selected'),
-                        actions: <Widget>[
-                          FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'))
-                        ],
-                      );
+                    Provider.of<ShopProvider>(context, listen: false)
+                    .updateServiceNoImage(serviceName, serviceId)
+                    .then((response) {
+                  if (response['success']) {
+                    setState(() {
+                      loading = false;
                     });
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Text('Service updated Successfully :)'),
+                            actions: <Widget>[
+                              FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'))
+                            ],
+                          );
+                        });
+                   
+                  } else {
+                    setState(() {
+                      loading = false;
+                    });
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Text(response['msg']),
+                            actions: <Widget>[
+                              FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'))
+                            ],
+                          );
+                        });
+                       
+                  }
+                }).catchError((error) {
+                  setState(() {
+                    loading = false;
+                  });
+                  print(error);
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text(
+                              'Check your Internet connection then try again'),
+                          actions: <Widget>[
+                            FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'))
+                          ],
+                        );
+                      });
+                      
+                });
               }
             }
           },
@@ -262,7 +305,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 color: Colors.white),
             child: Text(
-              'Add Service',
+              'Update Service',
               style: TextStyle(fontSize: 18, color: Colors.white),
             ),
           ));
@@ -316,7 +359,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    Text('Add a photo for the service',
+                    Text('Update photo (Optional)',
                         style: TextStyle(
                           fontSize: 18,
                         )),
@@ -356,7 +399,7 @@ class _UpdateServiceDesktopState extends State<UpdateServiceDesktop> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Text('Add Service', style: TextStyle(fontSize: 22)),
+                  child: Text('Update Service', style: TextStyle(fontSize: 22)),
                 ),
                 SizedBox(height: 50),
                 _formWidget(height: height)

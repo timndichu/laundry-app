@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:laundry_admin/models/products.dart';
+import 'package:laundry_admin/models/services.dart';
 import 'package:laundry_admin/providers/shop_provider.dart';
 import 'package:laundry_admin/widget/text_input_decoration.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -13,6 +16,8 @@ import 'package:provider/provider.dart';
 import '../dashboard.dart';
 
 class UpdateProductDesktop extends StatefulWidget {
+     final Product product;
+   UpdateProductDesktop({this.product});
   @override
   _UpdateProductDesktopState createState() => _UpdateProductDesktopState();
 }
@@ -23,7 +28,7 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
   String price = '';
   bool loading = false;
   String productImage = '';
-
+  int productId = 0;
   File _image;
   final picker = ImagePicker();
 
@@ -37,16 +42,35 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
     FocusNode(),
   ];
 
-   String dropdownvalue = 'Laundry';
-  var services = [
-    'Laundry',
-    'Ironing',
-    'Dry Cleaning',
-    'Washing and Ironing'
-  ];
-
+  String dropdownvalue = 'Choose Service';
+  int serviceId = 0;
+  var services = ["Choose Service"];
+   
+  var servicesId = [0];
+  var servicesLength = 0;
   @override
   void initState() {
+
+    productId = widget.product.id;
+    serviceId = widget.product.serviceId;
+    _productName.text = widget.product.title;
+      _price.text = widget.product.price.toString();
+   
+    servicesLength = Provider.of<ShopProvider>(context, listen: false)
+        .services.length;
+    if(servicesLength  > 0){
+            Provider.of<ShopProvider>(context, listen: false)
+        .services
+        .forEach((element) {
+          if(element.id == widget.product.serviceId ){
+            dropdownvalue = element.title;
+          }
+      services.add(element.title);
+      servicesId.add(element.id);
+    });
+
+        }
+  
     _focusNodes.forEach((node) {
       node.addListener(() {
         setState(() {});
@@ -152,7 +176,7 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
         imageExists = false;
       });
     }
-     Widget _userSubmitButton() {
+    Widget _userSubmitButton() {
       return InkWell(
           onTap: () {
             if (_formKey.currentState.validate()) {
@@ -161,13 +185,12 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
               });
               String productName = _productName.text;
               String price = _price.text;
-              String serviceType = dropdownvalue;
 
               var image = objFile;
               if (image != null) {
                 print('There is an image!');
                 Provider.of<ShopProvider>(context, listen: false)
-                    .postProduct(productName, price, serviceType, image)
+                    .updateProductWithImage(productName, image, productId, serviceId, price)
                     .then((response) {
                   if (response['success']) {
                     setState(() {
@@ -177,7 +200,7 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text('Product added Successfully :)'),
+                            content: Text('Service updated Successfully :)'),
                             actions: <Widget>[
                               FlatButton(
                                   onPressed: () {
@@ -187,11 +210,7 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                             ],
                           );
                         });
-                    setState(() {
-                      _productName.text = '';
-                      _price.text = '';
-                      objFile = null;
-                    });
+                
                   } else {
                     setState(() {
                       loading = false;
@@ -210,11 +229,7 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                             ],
                           );
                         });
-                         setState(() {
-                      _productName.text = '';
-                        _price.text = '';
-                      objFile = null;
-                    });
+                      
                   }
                 }).catchError((error) {
                   setState(() {
@@ -235,30 +250,73 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                           ],
                         );
                       });
-                       setState(() {
-                      _productName.text = '';
-                        _price.text = '';
-                      objFile = null;
-                    });
+                   
                 });
               } else {
-                setState(() {
-                  loading = false;
-                });
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: Text('No image selected'),
-                        actions: <Widget>[
-                          FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'))
-                        ],
-                      );
+                    Provider.of<ShopProvider>(context, listen: false)
+                    .updateProductNoImage(productName, productId, serviceId, price)
+                    .then((response) {
+                  if (response['success']) {
+                    setState(() {
+                      loading = false;
                     });
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Text('Service updated Successfully :)'),
+                            actions: <Widget>[
+                              FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'))
+                            ],
+                          );
+                        });
+                   
+                  } else {
+                    setState(() {
+                      loading = false;
+                    });
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Text(response['msg']),
+                            actions: <Widget>[
+                              FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'))
+                            ],
+                          );
+                        });
+                       
+                  }
+                }).catchError((error) {
+                  setState(() {
+                    loading = false;
+                  });
+                  print(error);
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text(
+                              'Check your Internet connection then try again'),
+                          actions: <Widget>[
+                            FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'))
+                          ],
+                        );
+                      });
+                      
+                });
               }
             }
           },
@@ -274,7 +332,7 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 color: Colors.white),
             child: Text(
-              'Add Product',
+              'Update Product',
               style: TextStyle(fontSize: 18, color: Colors.white),
             ),
           ));
@@ -284,17 +342,17 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
       return Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child:    Container(
-                   
-                   
+          child: Container(
+            width: width / 2.2,
             child: Card(
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
               elevation: 4,
               child: Container(
                 padding: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                    color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -302,12 +360,14 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 400, maxHeight: 80),
+                        constraints:
+                            BoxConstraints(maxWidth: 400, maxHeight: 80),
                         child: TextFormField(
                           focusNode: _focusNodes[0],
                           style: TextStyle(
-                              color: Theme.of(context).textTheme.headline1.color),
-                          keyboardType: TextInputType.emailAddress,
+                              color:
+                                  Theme.of(context).textTheme.headline1.color),
+                          keyboardType: TextInputType.text,
                           controller: _productName,
                           decoration: textInputDecoration.copyWith(
                             labelText: 'Product name',
@@ -320,7 +380,6 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                                 color: _focusNodes[0].hasFocus
                                     ? Theme.of(context).accentColor
                                     : Colors.grey),
-                           
                           ),
                           validator: (val) =>
                               val.isEmpty ? 'Enter product name' : null,
@@ -330,13 +389,18 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 400, maxHeight: 80),
+                        constraints:
+                            BoxConstraints(maxWidth: 400, maxHeight: 80),
                         child: TextFormField(
                           focusNode: _focusNodes[1],
                           style: TextStyle(
-                              color: Theme.of(context).textTheme.headline1.color),
+                              color:
+                                  Theme.of(context).textTheme.headline1.color),
                           keyboardType: TextInputType.number,
                           controller: _price,
+                            inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+              ],
                           decoration: textInputDecoration.copyWith(
                             labelText: 'Price',
                             hintText: 'Price in Kenyan Shillings',
@@ -349,33 +413,47 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
                                 color: _focusNodes[1].hasFocus
                                     ? Theme.of(context).accentColor
                                     : Colors.grey),
-                           
                           ),
                           validator: (val) =>
                               val.isEmpty ? 'Enter price' : null,
                         ),
                       ),
                     ),
-                      SizedBox(height: 10),
-                     Text('Service type',style: TextStyle(
-                              fontSize: 18, )),
-              
-            Center(
-              child: DropdownButton(
-                value: dropdownvalue,
-                icon: Icon(Icons.keyboard_arrow_down),
-                items: services.map((String items) {
-                  return DropdownMenuItem(value: items, child: Text(items));
-                }).toList(),
-                onChanged: (newval) {
-                  setState(() {
-                    dropdownvalue = newval;
-                  });
-                },
-              ),
-            ),
                     SizedBox(height: 10),
-                    Text('Add a photo for the product', style: TextStyle(fontSize: 18,)),
+                    Text('Service type',
+                        style: TextStyle(
+                          fontSize: 18,
+                        )),
+                    Center(
+                      child: DropdownButton(
+                        value: dropdownvalue,
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        items: services.map((String items) {
+                          return DropdownMenuItem(
+                              value: items, child: Text(items));
+                        }).toList(),
+                        onChanged: (newval) {
+                          setState(() {
+                            dropdownvalue = newval;
+                            if(servicesLength>0) {
+                               Provider.of<ShopProvider>(context, listen: false)
+                                .services
+                                .forEach((element) {
+                              if (newval == element.title) {
+                                serviceId = element.id;
+                              }
+                            });
+                            }
+                           
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text('Update a photo for the product',
+                        style: TextStyle(
+                          fontSize: 18,
+                        )),
                     SizedBox(height: 10),
                     (objFile != null)
                         ? Text("File selected : ${objFile.name}")
@@ -400,27 +478,22 @@ class _UpdateProductDesktopState extends State<UpdateProductDesktop> {
     return Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-            backgroundColor: Colors.deepPurple,
-          
-            title: Text('Update Product'),
-           ),
-        body:
-            Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text('Add Product', style: TextStyle(fontSize: 22)),
-                ),
-                
-                SizedBox(height: 30),
-                _formWidget(height: height)
-              ],
-            ),)
-            
-          );
+          backgroundColor: Colors.deepPurple,
+          title: Text('Update Product'),
+        ),
+        body: Center(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text('Update Product', style: TextStyle(fontSize: 22)),
+            ),
+            SizedBox(height: 30),
+            _formWidget(height: height)
+          ],
+        )));
   }
 }

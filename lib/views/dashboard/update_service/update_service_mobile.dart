@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:laundry_admin/models/services.dart';
 import 'package:laundry_admin/widget/text_input_decoration.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +11,8 @@ import 'package:file_picker/file_picker.dart';
 
 
 class UpdateServiceMobile extends StatefulWidget {
+   final Service service;
+   UpdateServiceMobile({this.service});
   @override
   _UpdateServiceMobileState createState() => _UpdateServiceMobileState();
 }

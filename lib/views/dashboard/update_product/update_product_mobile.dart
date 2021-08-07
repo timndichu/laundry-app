@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:laundry_admin/models/products.dart';
+import 'package:laundry_admin/models/services.dart';
 import 'package:laundry_admin/providers/shop_provider.dart';
 import 'package:laundry_admin/widget/text_input_decoration.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -13,6 +15,8 @@ import 'package:provider/provider.dart';
 import '../dashboard.dart';
 
 class UpdateProductMobile extends StatefulWidget {
+       final Product product;
+   UpdateProductMobile({this.product});
   @override
   _UpdateProductMobileState createState() => _UpdateProductMobileState();
 }
@@ -37,16 +41,26 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
     FocusNode(),
   ];
 
-   String dropdownvalue = 'Laundry';
-  var services = [
-    'Laundry',
-    'Ironing',
-    'Dry Cleaning',
-    'Washing and Ironing'
-  ];
-
+  String dropdownvalue = 'Choose Service';
+  int serviceId = 0;
+  var services = ["Choose Service"];
+   
+  var servicesId = [0];
+  var servicesLength = 0;
   @override
   void initState() {
+    servicesLength = Provider.of<ShopProvider>(context, listen: false)
+        .services.length;
+    if(servicesLength  > 0){
+            Provider.of<ShopProvider>(context, listen: false)
+        .services
+        .forEach((element) {
+      services.add(element.title);
+      servicesId.add(element.id);
+    });
+
+        }
+  
     _focusNodes.forEach((node) {
       node.addListener(() {
         setState(() {});
@@ -152,7 +166,7 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
         imageExists = false;
       });
     }
-     Widget _userSubmitButton() {
+    Widget _userSubmitButton() {
       return InkWell(
           onTap: () {
             if (_formKey.currentState.validate()) {
@@ -161,13 +175,34 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
               });
               String productName = _productName.text;
               String price = _price.text;
-              String serviceType = dropdownvalue;
+              int _serviceId = serviceId;
 
               var image = objFile;
+
+              if(dropdownvalue == "Choose Service") {
+                setState(() {
+                      loading = false;
+                    });
+                  return  showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            content: Text('An error occurred'),
+                            actions: <Widget>[
+                              FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'))
+                            ],
+                          );
+                        });
+              }
+
               if (image != null) {
                 print('There is an image!');
                 Provider.of<ShopProvider>(context, listen: false)
-                    .postProduct(productName, price, serviceType, image)
+                    .postProduct(productName, price, _serviceId, image)
                     .then((response) {
                   if (response['success']) {
                     setState(() {
@@ -210,9 +245,9 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
                             ],
                           );
                         });
-                         setState(() {
+                    setState(() {
                       _productName.text = '';
-                        _price.text = '';
+                      _price.text = '';
                       objFile = null;
                     });
                   }
@@ -235,11 +270,11 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
                           ],
                         );
                       });
-                       setState(() {
-                      _productName.text = '';
-                        _price.text = '';
-                      objFile = null;
-                    });
+                  setState(() {
+                    _productName.text = '';
+                    _price.text = '';
+                    objFile = null;
+                  });
                 });
               } else {
                 setState(() {
@@ -284,17 +319,17 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
       return Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child:    Container(
-                   
-                   
+          child: Container(
+            width: width / 2.2,
             child: Card(
-              shape:
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
               elevation: 4,
               child: Container(
                 padding: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                    color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -302,11 +337,13 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 400, maxHeight: 80),
+                        constraints:
+                            BoxConstraints(maxWidth: 400, maxHeight: 80),
                         child: TextFormField(
                           focusNode: _focusNodes[0],
                           style: TextStyle(
-                              color: Theme.of(context).textTheme.headline1.color),
+                              color:
+                                  Theme.of(context).textTheme.headline1.color),
                           keyboardType: TextInputType.emailAddress,
                           controller: _productName,
                           decoration: textInputDecoration.copyWith(
@@ -320,7 +357,6 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
                                 color: _focusNodes[0].hasFocus
                                     ? Theme.of(context).accentColor
                                     : Colors.grey),
-                           
                           ),
                           validator: (val) =>
                               val.isEmpty ? 'Enter product name' : null,
@@ -330,11 +366,13 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 400, maxHeight: 80),
+                        constraints:
+                            BoxConstraints(maxWidth: 400, maxHeight: 80),
                         child: TextFormField(
                           focusNode: _focusNodes[1],
                           style: TextStyle(
-                              color: Theme.of(context).textTheme.headline1.color),
+                              color:
+                                  Theme.of(context).textTheme.headline1.color),
                           keyboardType: TextInputType.number,
                           controller: _price,
                           decoration: textInputDecoration.copyWith(
@@ -349,33 +387,47 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
                                 color: _focusNodes[1].hasFocus
                                     ? Theme.of(context).accentColor
                                     : Colors.grey),
-                           
                           ),
                           validator: (val) =>
                               val.isEmpty ? 'Enter price' : null,
                         ),
                       ),
                     ),
-                      SizedBox(height: 10),
-                     Text('Service type',style: TextStyle(
-                              fontSize: 18, )),
-              
-            Center(
-              child: DropdownButton(
-                value: dropdownvalue,
-                icon: Icon(Icons.keyboard_arrow_down),
-                items: services.map((String items) {
-                  return DropdownMenuItem(value: items, child: Text(items));
-                }).toList(),
-                onChanged: (newval) {
-                  setState(() {
-                    dropdownvalue = newval;
-                  });
-                },
-              ),
-            ),
                     SizedBox(height: 10),
-                    Text('Add a photo for the product', style: TextStyle(fontSize: 18,)),
+                    Text('Service type',
+                        style: TextStyle(
+                          fontSize: 18,
+                        )),
+                    Center(
+                      child: DropdownButton(
+                        value: dropdownvalue,
+                        icon: Icon(Icons.keyboard_arrow_down),
+                        items: services.map((String items) {
+                          return DropdownMenuItem(
+                              value: items, child: Text(items));
+                        }).toList(),
+                        onChanged: (newval) {
+                          setState(() {
+                            dropdownvalue = newval;
+                            if(servicesLength>0) {
+                               Provider.of<ShopProvider>(context, listen: false)
+                                .services
+                                .forEach((element) {
+                              if (newval == element.title) {
+                                serviceId = element.id;
+                              }
+                            });
+                            }
+                           
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text('Add a photo for the product',
+                        style: TextStyle(
+                          fontSize: 18,
+                        )),
                     SizedBox(height: 10),
                     (objFile != null)
                         ? Text("File selected : ${objFile.name}")
@@ -400,53 +452,22 @@ class _UpdateProductMobileState extends State<UpdateProductMobile> {
     return Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
-            backgroundColor: Colors.deepPurple,
-          
-            title: Text('Update Product'),
-           ),
-        body: Row(
+          backgroundColor: Colors.deepPurple,
+          title: Text('Add Product'),
+        ),
+        body: Center(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-             Container(
-                width: width / 6,
-                height: height,
-                color: Colors.white,
-                child: ListView(
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Dashboard()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.local_laundry_service),
-                      title: Text('View Services'),
-                    ),
-                    ListTile(
-                      leading: Icon(MdiIcons.tshirtCrew),
-                      title: Text('View Products'),
-                    )
-                  ],
-                )),
-            Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text('Add Product', style: TextStyle(fontSize: 22)),
-                ),
-                
-                SizedBox(height: 30),
-                _formWidget(height: height)
-              ],
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text('Add Product', style: TextStyle(fontSize: 22)),
             ),
-            Spacer()
+            SizedBox(height: 30),
+            _formWidget(height: height)
           ],
-        ));
+        )));
   }
 }

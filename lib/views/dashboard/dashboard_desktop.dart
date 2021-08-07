@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:laundry_admin/providers/shop_provider.dart';
 import 'package:laundry_admin/views/dashboard/add_product/add_product.dart';
 import 'package:laundry_admin/views/dashboard/add_product/add_product_desktop.dart';
 
@@ -14,6 +15,7 @@ import 'package:laundry_admin/views/dashboard/view_users/users.dart';
 import 'package:laundry_admin/views/login/login.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:analog_clock/analog_clock.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -32,8 +34,16 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
   @override
   void initState() {
     date = DateFormat('EEEE, d MMM, yyyy').format(dateNow).toString();
+     Provider.of<ShopProvider>(context, listen: false).services.length > 0
+        ? print('ALready fetched')
+        : Future.delayed(Duration.zero, () {
+            Provider.of<ShopProvider>(context, listen: false).getServices();
+          });
+          
     super.initState();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +258,7 @@ class _DashboardDesktopState extends State<DashboardDesktop> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 60),
+                      SizedBox(width: 20),
                     ],
                   ),
                 ),
